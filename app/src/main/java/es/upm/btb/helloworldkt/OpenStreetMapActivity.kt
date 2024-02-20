@@ -62,10 +62,12 @@ class OpenStreetMapActivity : AppCompatActivity() {
             map.controller.setCenter(startPoint)
             map.controller.setCenter(startPoint)
 
-            addMarker(startPoint, "My current location")
+//            addMarker(startPoint, "My current location")
+//            addMarkersAndRoute(map, gymkhanaCoords, gymkhanaNames)
 
             addMarker(startPoint, "My current location")
             addMarkers(map, gymkhanaCoords, gymkhanaNames)
+            map.controller.setZoom(18.0)
         };
     }
 
