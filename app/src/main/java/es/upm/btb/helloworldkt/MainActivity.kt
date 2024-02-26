@@ -129,6 +129,15 @@ class MainActivity : AppCompatActivity(), LocationListener {
             apply()
         }
     }
+
+    private fun saveColorIdentifier(userIdentifier: String) {
+        val sharedPreferences = this.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        sharedPreferences.edit().apply {
+            putString("themeColor", "#FFFFFFFF")
+            apply()
+        }
+    }
+
     private fun getUserIdentifier(): String? {
         val sharedPreferences = this.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         return sharedPreferences.getString("userIdentifier", null)
