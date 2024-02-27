@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         latestLocation = location
         val textView: TextView = findViewById(R.id.mainTextView)
         Toast.makeText(this, "Coordinates update! [${location.latitude}][${location.longitude}]", Toast.LENGTH_LONG).show()
-        textView.text = "Latitude: [${location.latitude}], Longitude: [${location.longitude}], UserId: [${getUserIdentifier()}]"
+        textView.text = "Latitude: ${location.latitude}\nLongitude: ${location.longitude}\nUserId: ${getUserIdentifier()}"
         saveCoordinatesToFile(location.latitude, location.longitude)
     }
 
