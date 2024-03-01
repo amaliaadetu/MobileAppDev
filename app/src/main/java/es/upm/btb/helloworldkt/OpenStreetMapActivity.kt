@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.opencsv.CSVParser
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -19,8 +18,7 @@ import java.io.InputStreamReader
 class OpenStreetMapActivity : AppCompatActivity() {
     private val TAG = "btaOpenStreetMapActivity"
     private lateinit var map: MapView
-
-//    val inputStream = assets.open("bars.csv")
+    private val barList: MutableList<Bar> = mutableListOf()
 
     val gymkhanaCoords = listOf(
         GeoPoint(40.38779608214728, -3.627687914352839), // Tennis
@@ -55,9 +53,13 @@ class OpenStreetMapActivity : AppCompatActivity() {
         val location: Location? = bundle?.getParcelable("location")
 
         if (location != null) {
-            Log.i(TAG, "onCreate: Location["+location.altitude+"]["+location.latitude+"]["+location.longitude+"][")
+            Log.i(
+                TAG,
+                "onCreate: Location[" + location.altitude + "][" + location.latitude + "][" + location.longitude + "]["
+            )
 
-            Configuration.getInstance().load(applicationContext, getSharedPreferences("osm", MODE_PRIVATE))
+            Configuration.getInstance()
+                .load(applicationContext, getSharedPreferences("osm", MODE_PRIVATE))
 
             map = findViewById(R.id.map)
             map.setTileSource(TileSourceFactory.MAPNIK)
@@ -69,6 +71,8 @@ class OpenStreetMapActivity : AppCompatActivity() {
             map.controller.setCenter(startPoint)
             map.controller.setCenter(startPoint)
 
+            addMarker(barList[0].location, "100 Montatidos")
+
             addMarker(startPoint, "My current location")
             addMarkersAndRoute(map, gymkhanaCoords, gymkhanaNames)
 
@@ -78,7 +82,11 @@ class OpenStreetMapActivity : AppCompatActivity() {
         };
     }
 
-    fun addMarkers(mapView: MapView, locationsCoords: List<GeoPoint>, locationsNames: List<String>) {
+    fun addMarkers(
+        mapView: MapView,
+        locationsCoords: List<GeoPoint>,
+        locationsNames: List<String>
+    ) {
 
         for (location in locationsCoords) {
             val marker = Marker(mapView)
@@ -86,18 +94,23 @@ class OpenStreetMapActivity : AppCompatActivity() {
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             mapView.overlays.add(marker)
 
-            marker.title = "Marker at ${locationsNames.get(locationsCoords.indexOf(location))} ${location.latitude}, ${location.longitude}"
+            marker.title =
+                "Marker at ${locationsNames.get(locationsCoords.indexOf(location))} ${location.latitude}, ${location.longitude}"
             mapView.overlays.add(marker)
-
-//            marker.icon = ContextCompat.getDrawable(this, com.google.android.material.R.drawable.ic_m3_chip_checked_circle)
-//            mapView.overlays.add(marker)
         }
         mapView.invalidate() // Refresh the map to display the new markers
     }
 
-    fun addMarkersAndRoute(mapView: MapView, locationsCoords: List<GeoPoint>, locationsNames: List<String>) {
+    fun addMarkersAndRoute(
+        mapView: MapView,
+        locationsCoords: List<GeoPoint>,
+        locationsNames: List<String>
+    ) {
         if (locationsCoords.size != locationsNames.size) {
-            Log.e("addMarkersAndRoute", "Locations and names lists must have the same number of items.")
+            Log.e(
+                "addMarkersAndRoute",
+                "Locations and names lists must have the same number of items."
+            )
             return
         }
 
@@ -111,8 +124,10 @@ class OpenStreetMapActivity : AppCompatActivity() {
             marker.position = location
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             val locationIndex = locationsCoords.indexOf(location)
-            marker.title = "Marker at ${locationsNames[locationIndex]} ${location.latitude}, ${location.longitude}"
-            marker.icon = ContextCompat.getDrawable(this, org.osmdroid.library.R.drawable.ic_menu_compass)
+            marker.title =
+                "Marker at ${locationsNames[locationIndex]} ${location.latitude}, ${location.longitude}"
+            marker.icon =
+                ContextCompat.getDrawable(this, org.osmdroid.library.R.drawable.ic_menu_compass)
             mapView.overlays.add(marker)
         }
 
@@ -120,22 +135,27 @@ class OpenStreetMapActivity : AppCompatActivity() {
     }
 
 
-    private fun createObjects(){
+    private fun createObjects() {
         val input = InputStreamReader(assets.open("bars.csv"));
         val reader = BufferedReader(input)
 
-        var  line : String = ""
-        var barData : String = ""
-
-        while (reader.readLine().also { line = it } != null){
-             val row : List<String> = line.split(",")
-         barData = barData + row[0] + "\t" + row[1]+ "\n"
+        reader.forEachLine { line ->
+            val c = line.split(",")
+            if (c.size >= 2) {
+                val id: Int = c[0].toInt()
+                val location: GeoPoint = GeoPoint(c[2].toDouble(), c[3].toDouble())
+                val rating: Float = c[6].toFloat()
+                barList.add(
+                    Bar(id, c[1], location, c[4], c[5], rating, false)
+                )
+//                Log.i(TAG, barList.toString())
+            } else {
+                // Handle incomplete or malformed lines
+                println("Skipping malformed line: $line")
+            }
         }
-        Log.i(TAG, barData)
-
-//        var txtData : TextView = findviewById(R. id. data) as Textview
-//        txtData.text = displayData
     }
+
     private fun addMarker(point: GeoPoint, title: String) {
         val marker = Marker(map)
         marker.position = point
@@ -156,3 +176,12 @@ class OpenStreetMapActivity : AppCompatActivity() {
     }
 }
 
+data class Bar(
+    val id: Int,
+    val name: String,
+    val location: GeoPoint,
+    val description: String,
+    val price: String,
+    val rating: Float,
+    val isChecked: Boolean
+)
