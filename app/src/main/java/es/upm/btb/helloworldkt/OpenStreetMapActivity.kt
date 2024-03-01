@@ -5,17 +5,22 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.opencsv.CSVParser
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 
 class OpenStreetMapActivity : AppCompatActivity() {
     private val TAG = "btaOpenStreetMapActivity"
     private lateinit var map: MapView
+
+//    val inputStream = assets.open("bars.csv")
 
     val gymkhanaCoords = listOf(
         GeoPoint(40.38779608214728, -3.627687914352839), // Tennis
@@ -43,6 +48,8 @@ class OpenStreetMapActivity : AppCompatActivity() {
         setContentView(R.layout.activity_open_street_map)
 
         Log.d(TAG, "onCreate: The activity is being created.");
+
+        createObjects();
 
         val bundle = intent.getBundleExtra("locationBundle")
         val location: Location? = bundle?.getParcelable("location")
@@ -82,8 +89,8 @@ class OpenStreetMapActivity : AppCompatActivity() {
             marker.title = "Marker at ${locationsNames.get(locationsCoords.indexOf(location))} ${location.latitude}, ${location.longitude}"
             mapView.overlays.add(marker)
 
-            marker.icon = ContextCompat.getDrawable(this, com.google.android.material.R.drawable.ic_m3_chip_checked_circle)
-            mapView.overlays.add(marker)
+//            marker.icon = ContextCompat.getDrawable(this, com.google.android.material.R.drawable.ic_m3_chip_checked_circle)
+//            mapView.overlays.add(marker)
         }
         mapView.invalidate() // Refresh the map to display the new markers
     }
@@ -111,6 +118,24 @@ class OpenStreetMapActivity : AppCompatActivity() {
 
         mapView.invalidate()
     }
+
+
+    private fun createObjects(){
+        val input = InputStreamReader(assets.open("bars.csv"));
+        val reader = BufferedReader(input)
+
+        var  line : String = ""
+        var barData : String = ""
+
+        while (reader.readLine().also { line = it } != null){
+             val row : List<String> = line.split(",")
+         barData = barData + row[0] + "\t" + row[1]+ "\n"
+        }
+        Log.i(TAG, barData)
+
+//        var txtData : TextView = findviewById(R. id. data) as Textview
+//        txtData.text = displayData
+    }
     private fun addMarker(point: GeoPoint, title: String) {
         val marker = Marker(map)
         marker.position = point
@@ -130,3 +155,4 @@ class OpenStreetMapActivity : AppCompatActivity() {
         map.onPause()
     }
 }
+
