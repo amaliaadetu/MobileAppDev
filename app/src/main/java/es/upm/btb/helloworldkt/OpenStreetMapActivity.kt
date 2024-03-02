@@ -1,5 +1,6 @@
 package es.upm.btb.helloworldkt
 
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -19,27 +20,6 @@ class OpenStreetMapActivity : AppCompatActivity() {
     private val TAG = "btaOpenStreetMapActivity"
     private lateinit var map: MapView
     private val barList: MutableList<Bar> = mutableListOf()
-
-    val gymkhanaCoords = listOf(
-        GeoPoint(40.38779608214728, -3.627687914352839), // Tennis
-        GeoPoint(40.38788595319803, -3.627048250272035), // Futsal outdoors
-        GeoPoint(40.3887315224542, -3.628643539758645), // Fashion and design
-        GeoPoint(40.38926842612264, -3.630067893975619), // Topos
-        GeoPoint(40.38956358584258, -3.629046081389352), // Teleco
-        GeoPoint(40.38992125672989, -3.6281366497769714), // ETSISI
-        GeoPoint(40.39037466191718, -3.6270256763598447), // Library
-        GeoPoint(40.389855884803005, -3.626782180787362) // CITSEM
-    )
-    val gymkhanaNames = listOf(
-        "Tennis",
-        "Futsal outdoors",
-        "Fashion and design school",
-        "Topography school",
-        "Telecommunications school",
-        "ETSISI",
-        "Library",
-        "CITSEM"
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,19 +47,35 @@ class OpenStreetMapActivity : AppCompatActivity() {
             map.controller.setZoom(15.0)
 
             val startPoint = GeoPoint(location.latitude, location.longitude)
-            //val startPoint = GeoPoint(40.416775, -3.703790) in case you want to test it mannualy
-            map.controller.setCenter(startPoint)
             map.controller.setCenter(startPoint)
 
-            addMarker(barList[0].location, "100 Montatidos")
-
             addMarker(startPoint, "My current location")
-            addMarkersAndRoute(map, gymkhanaCoords, gymkhanaNames)
 
-            addMarker(startPoint, "My current location")
-            addMarkers(map, gymkhanaCoords, gymkhanaNames)
+            addBarMarkers()
+
             map.controller.setZoom(18.0)
         };
+    }
+
+    fun addBarMarkers() {
+        for (bar in barList) {
+            val marker = Marker(map)
+            marker.position = bar.location
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            map.overlays.add(marker)
+            marker.title = "${bar.name} \n rating: ${bar.rating} \n price:  ${bar.price}"
+
+            try {
+                val inputStream = assets.open("${bar.id}.jpg")
+                val image = Drawable.createFromStream(inputStream, null)
+                marker.image = image
+                inputStream.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            map.overlays.add(marker)
+        }
+        map.invalidate()
     }
 
     fun addMarkers(
@@ -146,7 +142,7 @@ class OpenStreetMapActivity : AppCompatActivity() {
                 val location: GeoPoint = GeoPoint(c[2].toDouble(), c[3].toDouble())
                 val rating: Float = c[6].toFloat()
                 barList.add(
-                    Bar(id, c[1], location, c[4], c[5], rating, false)
+                    Bar(id, c[1], location, c[4], c[5], rating, c[7], false)
                 )
 //                Log.i(TAG, barList.toString())
             } else {
@@ -183,5 +179,6 @@ data class Bar(
     val description: String,
     val price: String,
     val rating: Float,
+    val imageUrl: String,
     val isChecked: Boolean
 )
