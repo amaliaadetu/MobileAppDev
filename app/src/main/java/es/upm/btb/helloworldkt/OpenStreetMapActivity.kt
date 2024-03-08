@@ -14,12 +14,14 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import kotlin.math.*
 
 
 class OpenStreetMapActivity : AppCompatActivity() {
     private val TAG = "btaOpenStreetMapActivity"
     private lateinit var map: MapView
     private val barList: MutableList<Bar> = mutableListOf()
+    var newList: MutableList<Bar> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,12 +48,19 @@ class OpenStreetMapActivity : AppCompatActivity() {
 
             map.controller.setZoom(15.0)
 
-            val startPoint = GeoPoint(location.latitude, location.longitude)
+            var startPoint = GeoPoint(location.latitude, location.longitude)
             map.controller.setCenter(startPoint)
 
             addMarker(startPoint, "My current location")
 
             addBarMarkers()
+            Log.i(TAG, "before quickestPath")
+//            addMarkersAndRoute(map, )
+            val visited: IntArray = IntArray(barList.size) { 0 }
+            quickestPath(startPoint, barList, visited)
+            addMarkersAndRoute(map, newList)
+            for (places in newList)
+                Log.i(TAG,places.name)
 
             map.controller.setZoom(18.0)
         };
@@ -78,48 +87,43 @@ class OpenStreetMapActivity : AppCompatActivity() {
         map.invalidate()
     }
 
-    fun addMarkers(
-        mapView: MapView,
-        locationsCoords: List<GeoPoint>,
-        locationsNames: List<String>
-    ) {
-
-        for (location in locationsCoords) {
-            val marker = Marker(mapView)
-            marker.position = location
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            mapView.overlays.add(marker)
-
-            marker.title =
-                "Marker at ${locationsNames.get(locationsCoords.indexOf(location))} ${location.latitude}, ${location.longitude}"
-            mapView.overlays.add(marker)
-        }
-        mapView.invalidate() // Refresh the map to display the new markers
-    }
+//    fun addMarkers(
+//        mapView: MapView,
+//        locationsCoords: List<GeoPoint>,
+//        locationsNames: List<String>
+//    ) {
+//
+//        for (location in locationsCoords) {
+//            val marker = Marker(mapView)
+//            marker.position = location
+//            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+//            mapView.overlays.add(marker)
+//
+//            marker.title =
+//                "Marker at ${locationsNames.get(locationsCoords.indexOf(location))} ${location.latitude}, ${location.longitude}"
+//            mapView.overlays.add(marker)
+//        }
+//        mapView.invalidate() // Refresh the map to display the new markers
+//    }
 
     fun addMarkersAndRoute(
         mapView: MapView,
-        locationsCoords: List<GeoPoint>,
-        locationsNames: List<String>
+        placesList: List<Bar>
     ) {
-        if (locationsCoords.size != locationsNames.size) {
-            Log.e(
-                "addMarkersAndRoute",
-                "Locations and names lists must have the same number of items."
-            )
-            return
-        }
 
         val route = Polyline()
-        route.setPoints(locationsCoords)
+
+        val locationList: List<GeoPoint> = placesList.map { it.location } //i made a list of the coords
+        val locationsNames: List<String> = placesList.map { it.name }
+        route.setPoints(locationList)
         route.color = ContextCompat.getColor(this, R.color.teal_700)
         mapView.overlays.add(route)
 
-        for (location in locationsCoords) {
+        for (location in locationList) {
             val marker = Marker(mapView)
             marker.position = location
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            val locationIndex = locationsCoords.indexOf(location)
+            val locationIndex = locationList.indexOf(location)
             marker.title =
                 "Marker at ${locationsNames[locationIndex]} ${location.latitude}, ${location.longitude}"
             marker.icon =
@@ -130,7 +134,57 @@ class OpenStreetMapActivity : AppCompatActivity() {
         mapView.invalidate()
     }
 
+    fun calculateDistance(
+        point1: GeoPoint,
+        point2: GeoPoint
+    ): Double {
+        val earthRadius = 6371 // Earth radius in kilometers
 
+        val dLat = Math.toRadians(point2.latitude - point1.latitude)
+        val dLon = Math.toRadians(point2.longitude - point2.longitude)
+
+        val a = sin(dLat / 2) * sin(dLat / 2) +
+                cos(Math.toRadians(point1.latitude)) * cos(Math.toRadians(point2.latitude)) *
+                sin(dLon / 2) * sin(dLon / 2)
+
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return earthRadius * c
+    }
+
+    fun containsOnlyOnes(array: IntArray): Boolean {
+        for (element in array) {
+            if (element != 1) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun quickestPath(startPoint: GeoPoint, placesList: List<Bar>, visited: IntArray){
+        Log.i(TAG, "todo bien")
+
+        var n: Int = 0
+        var closestPlace: Bar = placesList[0]
+        var min: Double = 9999.0
+        for (i in placesList.indices) {
+            if (visited[i] == 0) {
+                val current: Double = calculateDistance(startPoint, placesList[i].location)
+                if (current < min) {
+                    min = current
+                    closestPlace = placesList[i]
+                    n = i;
+                }
+            }
+
+        }
+        visited[n] = 1;
+        newList.add(closestPlace)
+
+        if(containsOnlyOnes(visited) == false)
+            quickestPath(closestPlace.location, placesList, visited)
+
+    }
     private fun createObjects() {
         val input = InputStreamReader(assets.open("bars.csv"));
         val reader = BufferedReader(input)
@@ -181,4 +235,8 @@ data class Bar(
     val rating: Float,
     val imageUrl: String,
     val isChecked: Boolean
+
+//    fun getLocation(){
+//        return
+//    }
 )
