@@ -30,7 +30,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        val intent = Intent(this, MainActivity::class.java)
+        BarManager.loadBarsFromAssets(this);
+
         intent.putExtra("KEY", "value")
         startActivity(intent)
 
