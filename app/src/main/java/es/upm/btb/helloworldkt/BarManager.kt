@@ -43,5 +43,5 @@ data class Bar(
     val price: String,
     val rating: Float,
     val imageUrl: String,
-    val isChecked: Boolean
+    var isChecked: Boolean
 )

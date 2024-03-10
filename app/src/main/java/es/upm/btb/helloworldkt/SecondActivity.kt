@@ -18,16 +18,23 @@ import java.io.IOException
 class SecondActivity : AppCompatActivity() {
     private val TAG = "btaSecondActivity"
     private lateinit var binding : ActivitySecondBinding
+    private lateinit var adapter: BarAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        binding.listview.isClickable = true
-        binding.listview.adapter = BarAdapter(this)
-//        binding.listview.setOnItemClickListener { parent, view, position, id ->
+        adapter = BarAdapter(this)
+        binding.listview.adapter = adapter
 
-//        }
+        binding.listview.isClickable = true
+        binding.listview.adapter = BarAdapter(this)
+        binding.listview.setOnItemClickListener { parent, view, position, id ->
+            Toast.makeText(this, "Clicked on ${BarManager.barList[position]}", Toast.LENGTH_SHORT).show()
+            BarManager.barList[position].isChecked = !BarManager.barList[position].isChecked
+            adapter.notifyDataSetChanged()
+            Log.d(TAG, "isChecked" + BarManager.barList[position].isChecked);
+        }
 //        val value = intent.getStringExtra("KEY")
 //
 //        Log.d(TAG, "onCreate: The activity is being created.");
