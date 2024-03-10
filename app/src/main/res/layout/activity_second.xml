@@ -22,6 +22,12 @@
         app:layout_constraintStart_toEndOf="@id/secondNextButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    <!-- TextView below the buttons -->
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/list_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
