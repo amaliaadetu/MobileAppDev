@@ -13,4 +13,12 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+<!--    <style name="Theme.AnimatedSplashScreen" parent="android:Theme.Material.Light.NoActionBar"/>-->
+    
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="postSplashScreenTheme">@style/Theme.HelloWorldKt</item>
+<!--        <item name="android:windowSplashScreenAnimatedIcon">@drawable/our_animated_icon</item>-->
+    </style>
 </resources>
