@@ -54,10 +54,12 @@ class OpenStreetMapActivity : AppCompatActivity() {
 
             addBarMarkers()
             Log.i(TAG, "before quickestPath")
-//            addMarkersAndRoute(map, )
+
             val visited: IntArray = IntArray(BarManager.barList.size) { 0 }
+
             quickestPath(startPoint, BarManager.barList, visited)
-            addMarkersAndRoute(map, newList)
+
+            addMarkersAndRoute(map)
             for (places in newList)
                 Log.i(TAG,places.name)
 
@@ -86,34 +88,15 @@ class OpenStreetMapActivity : AppCompatActivity() {
         map.invalidate()
     }
 
-//    fun addMarkers(
-//        mapView: MapView,
-//        locationsCoords: List<GeoPoint>,
-//        locationsNames: List<String>
-//    ) {
-//
-//        for (location in locationsCoords) {
-//            val marker = Marker(mapView)
-//            marker.position = location
-//            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-//            mapView.overlays.add(marker)
-//
-//            marker.title =
-//                "Marker at ${locationsNames.get(locationsCoords.indexOf(location))} ${location.latitude}, ${location.longitude}"
-//            mapView.overlays.add(marker)
-//        }
-//        mapView.invalidate() // Refresh the map to display the new markers
-//    }
-
-    fun addMarkersAndRoute(
-        mapView: MapView,
-        placesList: List<Bar>
-    ) {
-
+    fun addMarkersAndRoute(mapView: MapView) {
         val route = Polyline()
 
-        val locationList: List<GeoPoint> = placesList.map { it.location } //i made a list of the coords
-        val locationsNames: List<String> = placesList.map { it.name }
+        // Filters the selected bars
+        var selectedBars : List<Bar> = BarManager.barList.filter { it.isChecked }
+
+        val locationList: List<GeoPoint> = selectedBars.map { it.location } //i made a list of the coords
+        val locationsNames: List<String> = selectedBars.map { it.name }
+
         route.setPoints(locationList)
         route.color = ContextCompat.getColor(this, R.color.teal_700)
         mapView.overlays.add(route)
