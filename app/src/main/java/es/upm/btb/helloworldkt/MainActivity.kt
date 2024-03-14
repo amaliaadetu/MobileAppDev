@@ -32,7 +32,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
         installSplashScreen()
         setContentView(R.layout.activity_main)
 
-//        val intent = Intent(this, MainActivity::class.java)
+        BarManager.loadBarsFromAssets(this);
+
         intent.putExtra("KEY", "value")
         startActivity(intent)
 
