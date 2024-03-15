@@ -20,16 +20,15 @@ import kotlin.math.*
 class OpenStreetMapActivity : AppCompatActivity() {
     private val TAG = "btaOpenStreetMapActivity"
     private lateinit var map: MapView
-    private val barList: MutableList<Bar> = mutableListOf()
+
     var newList: MutableList<Bar> = mutableListOf()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_open_street_map)
 
         Log.d(TAG, "onCreate: The activity is being created.");
-
-        createObjects();
 
         val bundle = intent.getBundleExtra("locationBundle")
         val location: Location? = bundle?.getParcelable("location")
@@ -56,8 +55,8 @@ class OpenStreetMapActivity : AppCompatActivity() {
             addBarMarkers()
             Log.i(TAG, "before quickestPath")
 //            addMarkersAndRoute(map, )
-            val visited: IntArray = IntArray(barList.size) { 0 }
-            quickestPath(startPoint, barList, visited)
+            val visited: IntArray = IntArray(BarManager.barList.size) { 0 }
+            quickestPath(startPoint, BarManager.barList, visited)
             addMarkersAndRoute(map, newList)
             for (places in newList)
                 Log.i(TAG,places.name)
@@ -67,7 +66,7 @@ class OpenStreetMapActivity : AppCompatActivity() {
     }
 
     fun addBarMarkers() {
-        for (bar in barList) {
+        for (bar in BarManager.barList) {
             val marker = Marker(map)
             marker.position = bar.location
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
@@ -195,7 +194,7 @@ class OpenStreetMapActivity : AppCompatActivity() {
                 val id: Int = c[0].toInt()
                 val location: GeoPoint = GeoPoint(c[2].toDouble(), c[3].toDouble())
                 val rating: Float = c[6].toFloat()
-                barList.add(
+                BarManager.barList.add(
                     Bar(id, c[1], location, c[4], c[5], rating, c[7], false)
                 )
 //                Log.i(TAG, barList.toString())
@@ -225,18 +224,3 @@ class OpenStreetMapActivity : AppCompatActivity() {
         map.onPause()
     }
 }
-
-data class Bar(
-    val id: Int,
-    val name: String,
-    val location: GeoPoint,
-    val description: String,
-    val price: String,
-    val rating: Float,
-    val imageUrl: String,
-    val isChecked: Boolean
-
-//    fun getLocation(){
-//        return
-//    }
-)
