@@ -61,15 +61,5 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:focusable="false"
-            android:focusableInTouchMode="false"/>
-
-
     </RelativeLayout>
 </LinearLayout>

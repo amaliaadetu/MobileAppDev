@@ -17,7 +17,7 @@ import android.widget.Button
 import android.widget.Toast
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+//import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import java.io.File
 
 
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen()
+//        installSplashScreen()
         setContentView(R.layout.activity_main)
 
         BarManager.loadBarsFromAssets(this);
