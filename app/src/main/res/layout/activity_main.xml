@@ -36,23 +36,23 @@
             android:layout_marginTop="300dp"
             android:src="@drawable/textapp" />
 
-        <Button
-            android:id="@+id/osmButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="120dp"
-            android:text="Show Map" />
+<!--        <Button-->
+<!--            android:id="@+id/osmButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:layout_marginTop="120dp"-->
+<!--            android:text="Show Map" />-->
 
-        <Button
-            android:id="@+id/mainButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="150dp"
-            android:layout_marginTop="500dp"
-            android:layout_marginEnd="98dp"
-            android:text="Start" />
+<!--        <Button-->
+<!--            android:id="@+id/mainButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:layout_marginStart="150dp"-->
+<!--            android:layout_marginTop="500dp"-->
+<!--            android:layout_marginEnd="98dp"-->
+<!--            android:text="Start" />-->
 
         <!--        <TextView-->
 <!--            android:id="@+id/catchy"-->
@@ -77,5 +77,14 @@
 <!--        app:layout_constraintTop_toBottomOf="@+id/mainTextView"-->
 <!--        app:layout_constraintVertical_bias="0.5" />-->
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        app:menu="@menu/bottom_nav_menu"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

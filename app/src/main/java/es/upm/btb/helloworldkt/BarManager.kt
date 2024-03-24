@@ -5,7 +5,6 @@ import org.osmdroid.util.GeoPoint
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-
 object BarManager {
     var barList: MutableList<Bar> = mutableListOf()
     // You can add functions here to add, remove, or update the bars list

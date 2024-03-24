@@ -1,9 +1,11 @@
 package es.upm.btb.helloworldkt
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.location.Location
+import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -20,7 +22,6 @@ class SecondActivity : AppCompatActivity() {
     private val TAG = "btaSecondActivity"
     private lateinit var binding: ActivitySecondBinding
     private lateinit var adapter: BarAdapter
-    private lateinit var latestLocation: Location
 
 
     @SuppressLint("ResourceAsColor")
@@ -36,8 +37,6 @@ class SecondActivity : AppCompatActivity() {
         binding.listview.adapter = BarAdapter(this)
 
         binding.listview.setOnItemClickListener { parent, view, position, id ->
-            Toast.makeText(this, "Clicked on ${BarManager.barList[position]}", Toast.LENGTH_SHORT)
-                .show()
             BarManager.barList[position].isChecked = !BarManager.barList[position].isChecked
 
             if (BarManager.barList[position].isChecked) {
@@ -54,23 +53,38 @@ class SecondActivity : AppCompatActivity() {
         }
 
 
-        
-
-        val navView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
-
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.bars -> {
-                    startActivity(Intent(this, SecondActivity::class.java))
+                R.id.navigation_home -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
                     true
                 }
-                R.id.map -> {
-                    startActivity(Intent(this, OpenStreetMapActivity::class.java))
+
+                R.id.navigation_map -> {
+                    if (DataManager.latestLocation != null) {
+                        val intent = Intent(this, OpenStreetMapActivity::class.java)
+                        val bundle = Bundle()
+                        bundle.putParcelable("location", DataManager.latestLocation)
+                        intent.putExtra("locationBundle", bundle)
+                        startActivity(intent)
+                    } else {
+                        Log.e(TAG, "Location not set yet.")
+                    }
                     true
                 }
+
+                R.id.navigation_list -> {
+                    val intent = Intent(this, SecondActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+
                 else -> false
             }
         }
+
 
 //        binding.bottomNavigationView.setOnItemSelectedListener {
 //            when (it.itemId) {
