@@ -17,19 +17,28 @@ import android.widget.Button
 import android.widget.Toast
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-//import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
+import androidx.room.Room
+import es.upm.btb.helloworldkt.persistence.room.AppDatabase
+import es.upm.btb.helloworldkt.persistence.room.BarEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.osmdroid.util.GeoPoint
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 
 
 class MainActivity : AppCompatActivity(), LocationListener {
     private val TAG = "btaMainActivity"
     private lateinit var locationManager: LocationManager
     private lateinit var latestLocation: Location
+    lateinit var database: AppDatabase
+
     private val locationPermissionCode = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        installSplashScreen()
         setContentView(R.layout.activity_main)
 
         BarManager.loadBarsFromAssets(this);
@@ -48,7 +57,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 bundle.putParcelable("location", latestLocation)
                 intent.putExtra("locationBundle", bundle)
                 startActivity(intent)
-            }else{
+            } else {
                 Log.e(TAG, "Location not set yet.")
             }
         }
@@ -76,7 +85,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
         ) {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
                 locationPermissionCode
             )
         } else {
@@ -92,14 +104,33 @@ class MainActivity : AppCompatActivity(), LocationListener {
             // If yes, use it or show it
             Toast.makeText(this, "User ID: $userIdentifier", Toast.LENGTH_LONG).show()
         }
+
+        database = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "bars").build()
+        fillAppDatabase()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == locationPermissionCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        5000,
+                        5f,
+                        this
+                    )
                 }
             }
         }
@@ -108,8 +139,13 @@ class MainActivity : AppCompatActivity(), LocationListener {
     override fun onLocationChanged(location: Location) {
         latestLocation = location
         val textView: TextView = findViewById(R.id.mainTextView)
-        Toast.makeText(this, "Coordinates update! [${location.latitude}][${location.longitude}]", Toast.LENGTH_LONG).show()
-        textView.text = "Latitude: ${location.latitude}\nLongitude: ${location.longitude}\nUserId: ${getUserIdentifier()}"
+        Toast.makeText(
+            this,
+            "Coordinates update! [${location.latitude}][${location.longitude}]",
+            Toast.LENGTH_LONG
+        ).show()
+        textView.text =
+            "Latitude: ${location.latitude}\nLongitude: ${location.longitude}\nUserId: ${getUserIdentifier()}"
         saveCoordinatesToFile(location.latitude, location.longitude)
     }
 
@@ -132,6 +168,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
             apply()
         }
     }
+
     private fun getUserIdentifier(): String? {
         val sharedPreferences = this.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         return sharedPreferences.getString("userIdentifier", null)
@@ -156,5 +193,38 @@ class MainActivity : AppCompatActivity(), LocationListener {
             .show()
     }
 
+    private fun fillAppDatabase() {
+        val input = InputStreamReader(this.assets.open("bars.csv"));
+        val reader = BufferedReader(input)
 
+        reader.forEachLine { line ->
+            val c = line.split(",")
+            if (c.size >= 2) {
+                val id: Int = c[0].toInt()
+                val location: GeoPoint = GeoPoint(c[2].toDouble(), c[3].toDouble())
+                val rating: Float = c[6].toFloat()
+
+                val newBar = BarEntity(
+                    id = id,
+                    name = c[1],
+                    location = location,
+                    price = c[4],
+                    rating = rating,
+                    imageUrl = c[7],
+                    isChecked = false
+                )
+                lifecycleScope.launch(Dispatchers.IO) {
+                    database.locationDao().insertBar(newBar)
+                }
+
+//                BarManager.barList.add(
+//                    Bar(id, c[1], location, c[4], c[5], rating, c[7], false)
+//                )
+//                Log.i(TAG, barList.toString())
+            } else {
+                // Handle incomplete or malformed lines
+                println("Skipping malformed line: $line")
+            }
+        }
+    }
 }
