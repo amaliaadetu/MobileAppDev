@@ -13,13 +13,14 @@ import androidx.core.app.ActivityCompat
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-//import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import java.io.File
-
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(), LocationListener {
     private val TAG = "btaMainActivity"
@@ -29,39 +30,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        installSplashScreen()
         setContentView(R.layout.activity_main)
 
         BarManager.loadBarsFromAssets(this);
 
         intent.putExtra("KEY", "value")
         startActivity(intent)
-
-        Log.d(TAG, "onCreate: The activity is being created.");
-        println("Hello world!")
-
-        val buttonOsm: Button = findViewById(R.id.osmButton)
-        buttonOsm.setOnClickListener {
-            if (latestLocation != null) {
-                val intent = Intent(this, OpenStreetMapActivity::class.java)
-                val bundle = Bundle()
-                bundle.putParcelable("location", latestLocation)
-                intent.putExtra("locationBundle", bundle)
-                startActivity(intent)
-            }else{
-                Log.e(TAG, "Location not set yet.")
-            }
-        }
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        val buttonNext: Button = findViewById(R.id.mainButton)
-        buttonNext.setOnClickListener {
-            val intent = Intent(this, SecondActivity::class.java)
-            val bundle = Bundle()
-            bundle.putParcelable("location", latestLocation)
-            intent.putExtra("locationBundle", bundle)
-            startActivity(intent)
-        }
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -84,14 +58,50 @@ class MainActivity : AppCompatActivity(), LocationListener {
             // whichever happens first
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
         }
+
         val userIdentifier = getUserIdentifier()
         if (userIdentifier == null) {
             // If not, ask for it
             askForUserIdentifier()
         } else {
             // If yes, use it or show it
-            Toast.makeText(this, "User ID: $userIdentifier", Toast.LENGTH_LONG).show()
+//            Toast.makeText(this, "User ID: $userIdentifier", Toast.LENGTH_LONG).show()
         }
+
+        // ButtomNavigationMenu
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        navView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.navigation_map -> {
+                    if (latestLocation != null) {
+                        val intent = Intent(this, OpenStreetMapActivity::class.java)
+                        val bundle = Bundle()
+                        bundle.putParcelable("location", latestLocation)
+                        intent.putExtra("locationBundle", bundle)
+                        DataManager.latestLocation = latestLocation
+                        Log.d(TAG, "LATESTLOCATION: " +  DataManager.latestLocation)
+                        startActivity(intent)
+                    }else{
+                        Log.e(TAG, "Location not set yet.")
+                    }
+                    true
+                }
+                R.id.navigation_list -> {
+                    val intent = Intent(this, SecondActivity::class.java)
+                    DataManager.latestLocation = latestLocation
+                    Log.d(TAG, "LATESTLOCATION: " +  DataManager.latestLocation)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+        }
+
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -108,7 +118,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
     override fun onLocationChanged(location: Location) {
         latestLocation = location
         val textView: TextView = findViewById(R.id.mainTextView)
-        Toast.makeText(this, "Coordinates update! [${location.latitude}][${location.longitude}]", Toast.LENGTH_LONG).show()
+//        Toast.makeText(this, "Coordinates update! [${location.latitude}][${location.longitude}]", Toast.LENGTH_LONG).show()
         textView.text = "Latitude: ${location.latitude}\nLongitude: ${location.longitude}\nUserId: ${getUserIdentifier()}"
         saveCoordinatesToFile(location.latitude, location.longitude)
     }
@@ -147,13 +157,28 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 val userInput = input.text.toString()
                 if (userInput.isNotBlank()) {
                     saveUserIdentifier(userInput)
-                    Toast.makeText(this, "User ID saved: $userInput", Toast.LENGTH_LONG).show()
+//                    Toast.makeText(this, "User ID saved: $userInput", Toast.LENGTH_LONG).show()
                 } else {
-                    Toast.makeText(this, "User ID cannot be blank", Toast.LENGTH_LONG).show()
+//                    Toast.makeText(this, "User ID cannot be blank", Toast.LENGTH_LONG).show()
                 }
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
 

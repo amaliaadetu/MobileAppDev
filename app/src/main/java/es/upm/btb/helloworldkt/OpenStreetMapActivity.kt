@@ -1,11 +1,13 @@
 package es.upm.btb.helloworldkt
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -38,6 +40,8 @@ class OpenStreetMapActivity : AppCompatActivity() {
                 TAG,
                 "onCreate: Location[" + location.altitude + "][" + location.latitude + "][" + location.longitude + "]["
             )
+            DataManager.latestLocation = location
+            Log.d(TAG, "LATESTLOCATION: " +  DataManager.latestLocation)
 
             Configuration.getInstance()
                 .load(applicationContext, getSharedPreferences("osm", MODE_PRIVATE))
@@ -64,7 +68,28 @@ class OpenStreetMapActivity : AppCompatActivity() {
                 Log.i(TAG,places.name)
 
             map.controller.setZoom(18.0)
-        };
+
+        }
+
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        navView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.navigation_map -> {
+                    true
+                }
+                R.id.navigation_list -> {
+                    val intent = Intent(this, SecondActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     fun addBarMarkers() {

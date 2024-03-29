@@ -20,7 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HelloWorldKt"
         tools:targetApi="31">
-        <!-- change theme to Theme.HelloWorldkt to bo back to normal-->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <!-- change theme to Theme.HelloWorldkt to bo back to normal -->
         <activity
             android:name=".OpenStreetMapActivity"
             android:exported="false" />
@@ -41,7 +44,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.HelloWorldKt"> <!-- change this to Theme.HelloWorldkt to bo back to normal-->
+            android:theme="@style/Theme.HelloWorldKt"> <!-- change this to Theme.HelloWorldkt to bo back to normal -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
