@@ -18,7 +18,7 @@ Unlike generic travel apps, "Adendise" offers specialized features tailored to t
   <tr>
     <td>
       <img src="img/img1.png" width="80%" alt="Describe here image 1"/>
-      <p align="center">Home page</p>
+      <p align="left">Home page</p>
     </td>
     <td>
       <img src="img/img2.png" width="80%" alt="Describe here image 2"/>
