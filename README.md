@@ -3,9 +3,9 @@
 ## Workspace 
 Github:  
 - Repository: https://github.com/amaliaadetu/MobileAppDev   
-- Releases: https://github.com/btabuenca/HelloWorldKt/releases   ??
+- Releases: https://github.com/btabuenca/HelloWorldKt/releases 
 
-Workspace: https://upm365.sharepoint.com/sites/MobileAppSite .  ??
+Workspace: https://upm365.sharepoint.com/sites/Adendise/SitePages/CollabHome.aspx
   
 
 ## Description
