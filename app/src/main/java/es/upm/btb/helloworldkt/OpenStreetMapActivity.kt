@@ -59,11 +59,9 @@ class OpenStreetMapActivity : AppCompatActivity() {
             addBarMarkers()
             Log.i(TAG, "before quickestPath")
 
-            val visited: IntArray = IntArray(BarManager.barList.size) { 0 }
 
-            quickestPath(startPoint, BarManager.barList, visited)
 
-            addMarkersAndRoute(map)
+            addMarkersAndRoute(map, startPoint)
             for (places in newList)
                 Log.i(TAG,places.name)
 
@@ -113,30 +111,33 @@ class OpenStreetMapActivity : AppCompatActivity() {
         map.invalidate()
     }
 
-    fun addMarkersAndRoute(mapView: MapView) {
+    fun addMarkersAndRoute(mapView: MapView, startPoint: GeoPoint) {
         val route = Polyline()
 
         // Filters the selected bars
         var selectedBars : List<Bar> = BarManager.barList.filter { it.isChecked }
 
-        val locationList: List<GeoPoint> = selectedBars.map { it.location } //i made a list of the coords
-        val locationsNames: List<String> = selectedBars.map { it.name }
+        val visited: IntArray = IntArray(selectedBars.size) { 0 }
+        quickestPath(startPoint, selectedBars, visited)
+
+        var locationList: List<GeoPoint> = listOf(startPoint) + newList.map { it.location } //i made a list of the coords
+        var locationsNames: List<String> = listOf("Home") + newList.map { it.name }
 
         route.setPoints(locationList)
         route.color = ContextCompat.getColor(this, R.color.teal_700)
         mapView.overlays.add(route)
 
-        for (location in locationList) {
-            val marker = Marker(mapView)
-            marker.position = location
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            val locationIndex = locationList.indexOf(location)
-            marker.title =
-                "Marker at ${locationsNames[locationIndex]} ${location.latitude}, ${location.longitude}"
-            marker.icon =
-                ContextCompat.getDrawable(this, org.osmdroid.library.R.drawable.ic_menu_compass)
-            mapView.overlays.add(marker)
-        }
+//        for (location in locationList) {
+//            val marker = Marker(mapView)
+//            marker.position = location
+//            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+//            val locationIndex = locationList.indexOf(location)
+//            marker.title =
+//                "Marker at ${locationsNames[locationIndex]} ${location.latitude}, ${location.longitude}"
+//            marker.icon =
+//                ContextCompat.getDrawable(this, org.osmdroid.library.R.drawable.ic_menu_compass)
+//            mapView.overlays.add(marker)
+//        }
 
         mapView.invalidate()
     }

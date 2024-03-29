@@ -3,6 +3,8 @@ package es.upm.btb.helloworldkt
 
 import android.Manifest
 import android.content.Context
+import android.app.Activity
+
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -18,15 +20,24 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import android.widget.EditText
+import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AlertDialog
 import java.io.File
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity(), LocationListener {
     private val TAG = "btaMainActivity"
     private lateinit var locationManager: LocationManager
     private lateinit var latestLocation: Location
     private val locationPermissionCode = 2
+
+    companion object {
+        private const val RC_SIGN_IN = 123
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,7 +112,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 else -> false
             }
         }
-
+        Log.i("ia", packageName)
+//        launchSignInFlow()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -177,9 +189,71 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 startActivity(Intent(this, SettingsActivity::class.java))
                 true
             }
+            R.id.action_logout -> {
+                logout()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val response = IdpResponse.fromResultIntent(data)
+            if (resultCode == Activity.RESULT_OK) {
+                // user login succeeded
+                val user = FirebaseAuth.getInstance().currentUser
+                Toast.makeText(this, R.string.signed_in, Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "onActivityResult " + getString(R.string.signed_in));
+            } else {
+                // user login failed
+                Log.e(TAG, "Error starting auth session: ${response?.error?.errorCode}")
+                Toast.makeText(this, R.string.signed_cancelled, Toast.LENGTH_SHORT).show();
+                finish()
+            }
+        }
+    }
+    private fun launchSignInFlow() {
+        val providers = arrayListOf(
+            AuthUI.IdpConfig.EmailBuilder().build(),
+            AuthUI.IdpConfig.GoogleBuilder().build()
+        )
+        startActivityForResult(
+            AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .build(),
+            RC_SIGN_IN
+        )
+    }
+    private fun logout() {
+        AuthUI.getInstance()
+            .signOut(this)
+            .addOnCompleteListener {
+                // Restart activity after finishing
+                val intent = Intent(this, MainActivity::class.java)
+                // Clean back stack so that user cannot retake activity after logout
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
+    }
+    private fun updateUIWithUsername() {
+        Log.i("updateUIWithUsername", "prima merge");
+
+        val user = FirebaseAuth.getInstance().currentUser
+        val userNameTextView: TextView = findViewById(R.id.userNameTextView)
+        user?.let {
+            val name = user.displayName ?: "No Name"
+            userNameTextView.text = "\uD83E\uDD35\u200D♂\uFE0F " + name
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+        updateUIWithUsername()
+    }
+
 
 
 }
