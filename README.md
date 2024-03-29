@@ -13,33 +13,32 @@ Workspace: https://upm365.sharepoint.com/sites/MobileAppSite .  ??
 Unlike generic travel apps, "Adendise" offers specialized features tailored to the nightlife scene, providing an immersive experience for users looking to explore Madrid's vibrant nightlife.
 
 ## Screenshots and navigation
-Include screenshots of the app in action. You can upload the images to GitHub and then reference them here using Markdown or HTML syntax:
 
 <table>
   <tr>
     <td>
       <img src="img/img1.png" width="80%" alt="Describe here image 1"/>
-      <p align="center">Describe here image 1</p>
+      <p align="center">Home page</p>
     </td>
     <td>
       <img src="img/img2.png" width="80%" alt="Describe here image 2"/>
-      <p align="center">Describe here image 2</p>
+      <p align="center">List of bars</p>
     </td>
   </tr>
   <tr>
     <td>
       <img src="img/img3.png" width="80%" alt="Describe here image 3"/>
-      <p align="center">Describe here image 3</p>
+      <p align="center">The process of selecting bars</p>
     </td>
     <td>
       <img src="img/img4.png" width="80%" alt="Describe here image 4"/>
-      <p align="center">Describe here image 4</p>
+      <p align="center">The map</p>
     </td>
   </tr>
   <tr>
     <td>
       <img src="img/img5.png" width="80%" alt="Describe here image 5"/>
-      <p align="center">Describe here image 5</p>
+      <p align="center">The route based on the selected bars</p>
     </td>
     <td>
     </td>
