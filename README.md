@@ -59,30 +59,19 @@ Video demonstrating how the app works (Max 1 video of 1 minute), upload it to a 
 - Creation of optimal route.
 - Reconfiguration of route.
 
-List the **technical** features of the app. You might include specific references to source code
-in your repo. For example:
+List the **technical** features of the app:
 - Persistence in csv
 - Persistence in shared preferences
-- Persistence in Room database. Ref: [Source code](https://github.com/btabuenca/HelloWorldKt/blob/268a3367296238c76ec1baa18d0b5d268a49235f/app/src/main/java/es/upm/btb/helloworldkt/persistence/room/LocationEntity.kt#L6 "LocationEntity")
 - Firebase authentication
 - Maps: Openstreetmaps
-- Resful APIs used (*e.g., Openwheathermaps https://openweathermap.org/api .Describe the api here*). 
-- Menu: *e.g., Toolbar*
-- Images: *e.g. glide or picasso library*
-- Sensors: *e.g., GPS coordinates, noise meter, light meter, compass, gyroscope, ...* 
-- ...
+- Menu: Bottom Navigation Bar
+
 
 ## How to Use
 The users start from the home page, where they can see the bottom navigation bar. They can enter the map to see where the bars in our list are located, or go directly to the list in order to choose their preferences. Once they have made the selection, they go to the map and they can see the route that was created. If they want to add or delete any bar, they can slide back to the list, make the change, and go back to the map. The route begins from their current location.
 
-## Additional section
-You might describe any additional section you might consider necessary. Remove this if not necessary.
 
 ## Participants
-List of MAD developers:
 - Adetu Amalia (amaliaioana.adetu@alumunos.upm.es)
 - Emile Marchandise (emile.marchandise@alumunos.upm.es)  
 
-
-```bash
-you might include references or commands if necessary
