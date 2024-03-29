@@ -54,20 +54,18 @@ Video demonstrating how the app works (Max 1 video of 1 minute), upload it to a 
 </a>
 
 ## Features
-List the **functional** features of the app. For example:
-- Search for common routes in Madrid.
-- Filters by transport type.
-- Interactive maps.
-- Real-time traffic information.
+
+- List of most popular bars in Madrid.
+- Creation of optimal route.
+- Reconfiguration of route.
 
 List the **technical** features of the app. You might include specific references to source code
 in your repo. For example:
-- Persistence in csv/text file
+- Persistence in csv
 - Persistence in shared preferences
 - Persistence in Room database. Ref: [Source code](https://github.com/btabuenca/HelloWorldKt/blob/268a3367296238c76ec1baa18d0b5d268a49235f/app/src/main/java/es/upm/btb/helloworldkt/persistence/room/LocationEntity.kt#L6 "LocationEntity")
-- Firebase Realtime database
 - Firebase authentication
-- Maps: Openstreetmaps or Google maps
+- Maps: Openstreetmaps
 - Resful APIs used (*e.g., Openwheathermaps https://openweathermap.org/api .Describe the api here*). 
 - Menu: *e.g., Toolbar*
 - Images: *e.g. glide or picasso library*
@@ -75,18 +73,16 @@ in your repo. For example:
 - ...
 
 ## How to Use
-Provide instructions on how to get started with the app as user. 
+The users start from the home page, where they can see the bottom navigation bar. They can enter the map to see where the bars in our list are located, or go directly to the list in order to choose their preferences. Once they have made the selection, they go to the map and they can see the route that was created. If they want to add or delete any bar, they can slide back to the list, make the change, and go back to the map. The route begins from their current location.
 
 ## Additional section
 You might describe any additional section you might consider necessary. Remove this if not necessary.
 
 ## Participants
 List of MAD developers:
-- Name SecondName Member1 (emailmemmber1@alumunos.upm.es)
-- Name SecondName Member1 (emailmemmber1@alumunos.upm.es)  
+- Adetu Amalia (amaliaioana.adetu@alumunos.upm.es)
+- Emile Marchandise (emile.marchandise@alumunos.upm.es)  
 
-
-Workload distribution between members: (Percentage member1 / Percentage member 2) . *Please only specify in case of unevenly balanced workload distribution long the project e.g., (60%/40%). If not specified 50%/50% will be assumed*
 
 ```bash
 you might include references or commands if necessary
