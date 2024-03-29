@@ -48,7 +48,7 @@ Unlike generic travel apps, "Adendise" offers specialized features tailored to t
 
 
 ## Demo Video
-Video demonstrating how the app works (Max 1 video of 1 minute), upload it to a platform like YouTube or Vimeo (it might also work with Stream) and link it here:  
+  
 <a href="https://youtu.be/AfMGdk2LRkM">
 <img src="img/img2.png" alt="Noise meter app" width="100" /> 
 </a>
