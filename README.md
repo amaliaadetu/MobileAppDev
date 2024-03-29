@@ -22,23 +22,23 @@ Unlike generic travel apps, "Adendise" offers specialized features tailored to t
     </td>
     <td>
       <img src="img/img2.png" width="80%" alt="Describe here image 2"/>
-      <p align="center">List of bars</p>
+      <p align="left">List of bars</p>
     </td>
   </tr>
   <tr>
     <td>
       <img src="img/img3.png" width="80%" alt="Describe here image 3"/>
-      <p align="center">The process of selecting bars</p>
+      <p align="left">The process of selecting bars</p>
     </td>
     <td>
       <img src="img/img4.png" width="80%" alt="Describe here image 4"/>
-      <p align="center">The map</p>
+      <p align="left">The map</p>
     </td>
   </tr>
   <tr>
     <td>
       <img src="img/img5.png" width="80%" alt="Describe here image 5"/>
-      <p align="center">The route based on the selected bars</p>
+      <p align="left">The route based on the selected bars</p>
     </td>
     <td>
     </td>
